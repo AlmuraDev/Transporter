@@ -15,8 +15,6 @@
  */
 package com.frdfsnlght.transporter;
 
-import com.nijikokun.register.payment.Methods;
-import com.nijikokun.register.payment.Method;
 import net.milkbowl.vault.Vault.EconomyResponse;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -29,14 +27,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public final class Economy {
 
     private static net.milkbowl.vault.economy.Economy vaultPlugin = null;
-    private static Method registerPlugin = null;
-//    private static BOSEconomy boseconomyPlugin = null;
 
     public static boolean isAvailable() {
-        return vaultAvailable() ||
-               registerAvailable();
-
-//        return  boseconomyAvailable();
+        return vaultAvailable();
     }
 
     public static boolean vaultAvailable() {
@@ -53,37 +46,12 @@ public final class Economy {
         return true;
     }
 
-    public static boolean registerAvailable() {
-        if (! Config.getUseRegisterEconomy()) return false;
-        Plugin p = Global.plugin.getServer().getPluginManager().getPlugin("Register");
-        if ((p == null) || (! p.isEnabled())) return false;
-        if (registerPlugin != null) return true;
-        registerPlugin = Methods.getMethod();
-        Utils.info("Initialized Register for Economy");
-        return true;
-    }
 
-    /*
-    public static boolean boseconomyAvailable() {
-        if (! Config.getUseBOSEconomy()) return false;
-        Plugin p = Global.plugin.getServer().getPluginManager().getPlugin("BOSEconomy");
-        if ((p == null) || (! p.isEnabled())) return false;
-        if (boseconomyPlugin != null) return true;
-        boseconomyPlugin = (BOSEconomy)p;
-        Utils.info("Initialized BOSEconomy for Economy");
-        return true;
-    }
-*/
 
     public static String format(double funds) {
         if (vaultAvailable())
             return vaultPlugin.format(funds);
-        if (registerAvailable())
-            return registerPlugin.format(funds);
-//        if (boseconomyAvailable())
-//            return boseconomyPlugin.getMoneyFormatted(funds);
 
-        // default
         return String.format("$%1.2f", funds);
     }
 
@@ -101,20 +69,6 @@ public final class Economy {
                 throw new EconomyException("insufficient funds");
             return true;
         }
-        if (registerAvailable()) {
-            Method.MethodAccount account = registerPlugin.getAccount(accountName);
-            if (! account.hasEnough(amount))
-                throw new EconomyException("insufficient funds");
-            return true;
-        }
-        /*
-        if (boseconomyAvailable()) {
-            double balance = boseconomyPlugin.getPlayerMoneyDouble(accountName);
-            if (balance < amount)
-                throw new EconomyException("insufficient funds");
-            return true;
-        }
-        */
 
         // default
         return false;
@@ -137,22 +91,6 @@ public final class Economy {
             if (r.transactionSuccess()) return true;
             throw new EconomyException("economy error: %s", r.errorMessage);
         }
-        if (registerAvailable()) {
-            Method.MethodAccount account = registerPlugin.getAccount(accountName);
-            if (! account.hasEnough(amount))
-                throw new EconomyException("insufficient funds");
-            if (account.subtract(amount)) return true;
-            throw new EconomyException("economy error");
-        }
-        /*
-        if (boseconomyAvailable()) {
-            double balance = boseconomyPlugin.getPlayerMoneyDouble(accountName);
-            if (balance < amount)
-                throw new EconomyException("insufficient funds");
-            if (boseconomyPlugin.addPlayerMoney(accountName, -amount, false)) return true;
-            throw new EconomyException("economy error");
-        }
-        */
 
         // default
         return false;

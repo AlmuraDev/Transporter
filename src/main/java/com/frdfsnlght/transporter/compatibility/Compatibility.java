@@ -29,9 +29,8 @@ import org.bukkit.inventory.ItemStack;
 public abstract class Compatibility {
 
     public static boolean setup() {
-        String p = Global.plugin.getServer().getClass().getPackage().getName();
-        String version = p.substring(p.lastIndexOf('.') + 1);
         try {
+            String version = "1_4_R1.";
             String classname = null;
             if (version.contains("craftbukkit"))
                 classname = Compatibility.class.getPackage().getName() + ".VPreClass";
