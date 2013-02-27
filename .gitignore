@@ -1,0 +1,6 @@
+*.iml
+*.prfs
+.project
+.classpath
+target/*
+.settings/*

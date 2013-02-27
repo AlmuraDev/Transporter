@@ -15,7 +15,7 @@
  */
 package com.frdfsnlght.transporter;
 
-import net.milkbowl.vault.Vault.EconomyResponse;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
